@@ -4,7 +4,7 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
-import serviceRoutes from './routes/serviceRoutes.js'; // Ajouté
+import serviceRoutes from './routes/serviceRoutes.js';
 
 dotenv.config();
 connectDB();
@@ -12,7 +12,7 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: ['https://findly.onrender.com', 'http://localhost:5173'],
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Utilise la variable d'environnement
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRoutes);
-app.use('/api/services', serviceRoutes); // Ajouté
+app.use('/api/services', serviceRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`);
