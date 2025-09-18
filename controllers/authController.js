@@ -15,10 +15,10 @@ const authUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin, // On retourne aussi le statut admin
+      isAdmin: user.isAdmin,
     });
   } else {
-    res.status(401).send('Invalid email or password');
+    res.status(401).send('Email ou mot de passe invalide');
   }
 };
 
@@ -28,10 +28,18 @@ const authUser = async (req, res) => {
 const registerUser = async (req, res) => {
   const { name, email, password, phone } = req.body;
 
+  // --- VALIDATION DU MOT DE PASSE AJOUTÉE ---
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{9,}$/;
+  if (!passwordRegex.test(password)) {
+    res.status(400).send('Le mot de passe ne respecte pas les critères de sécurité.');
+    return;
+  }
+  // --- FIN DE L'AJOUT ---
+
   const userExists = await User.findOne({ email });
 
   if (userExists) {
-    res.status(400).send('User already exists');
+    res.status(400).send('Un utilisateur avec cet email existe déjà');
     return;
   }
 
@@ -42,12 +50,10 @@ const registerUser = async (req, res) => {
     phone,
   });
 
-  // --- LOGIQUE SUPERADMIN AJOUTÉE ---
   if (user.email === process.env.SUPER_ADMIN_EMAIL) {
     user.isAdmin = true;
     await user.save();
   }
-  // --- FIN DE L'AJOUT ---
 
   if (user) {
     generateToken(res, user._id);
@@ -55,10 +61,10 @@ const registerUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      isAdmin: user.isAdmin, // On retourne aussi le statut admin
+      isAdmin: user.isAdmin,
     });
   } else {
-    res.status(400).send('Invalid user data');
+    res.status(400).send('Données utilisateur invalides');
   }
 };
 
@@ -70,7 +76,7 @@ const logoutUser = (req, res) => {
     httpOnly: true,
     expires: new Date(0),
   });
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.status(200).json({ message: 'Déconnexion réussie' });
 };
 
 export { authUser, registerUser, logoutUser };
