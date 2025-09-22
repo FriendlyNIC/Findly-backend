@@ -1,12 +1,8 @@
 import User from '../models/userModel.js';
 import generateToken from '../utils/generateToken.js';
 
-// @desc    Auth user & get token
-// @route   POST /api/auth/login
-// @access  Public
 const authUser = async (req, res) => {
   const { email, password } = req.body;
-
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
@@ -15,19 +11,17 @@ const authUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone, // Ligne ajoutée
       isAdmin: user.isAdmin,
-      role: user.role, // On retourne le rôle
+      role: user.role,
     });
   } else {
     res.status(401).send('Email ou mot de passe invalide');
   }
 };
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 const registerUser = async (req, res) => {
-  const { name, email, password, phone, role } = req.body; // `role` est maintenant récupéré
+  const { name, email, password, phone, role } = req.body;
 
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{9,}$/;
   if (!passwordRegex.test(password)) {
@@ -41,13 +35,7 @@ const registerUser = async (req, res) => {
     return;
   }
 
-  const user = await User.create({
-    name,
-    email,
-    password,
-    phone,
-    role, // `role` est maintenant sauvegardé
-  });
+  const user = await User.create({ name, email, password, phone, role });
 
   if (user.email === process.env.SUPER_ADMIN_EMAIL) {
     user.isAdmin = true;
@@ -60,22 +48,17 @@ const registerUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      phone: user.phone, // Ligne ajoutée
       isAdmin: user.isAdmin,
-      role: user.role, // On retourne le rôle
+      role: user.role,
     });
   } else {
     res.status(400).send('Données utilisateur invalides');
   }
 };
 
-// @desc    Logout user / clear cookie
-// @route   POST /api/auth/logout
-// @access  Public
 const logoutUser = (req, res) => {
-  res.cookie('jwt', '', {
-    httpOnly: true,
-    expires: new Date(0),
-  });
+  res.cookie('jwt', '', { httpOnly: true, expires: new Date(0) });
   res.status(200).json({ message: 'Déconnexion réussie' });
 };
 
