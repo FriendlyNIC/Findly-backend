@@ -30,6 +30,7 @@ const updateUserProfile = async (req, res) => {
     user.name = req.body.name || user.name;
     user.email = req.body.email || user.email;
     user.phone = req.body.phone || user.phone;
+    user.profilePicture = req.body.profilePicture || user.profilePicture;
 
     if (req.body.password) {
       user.password = req.body.password;
@@ -43,6 +44,7 @@ const updateUserProfile = async (req, res) => {
       email: updatedUser.email,
       phone: updatedUser.phone,
       role: updatedUser.role,
+      profilePicture: updatedUser.profilePicture,
     });
   } else {
     res.status(404).send('User not found');
@@ -56,17 +58,15 @@ const switchUserRole = async (req, res) => {
   const user = await User.findById(req.user._id);
 
   if (user) {
-    // Vérification du délai de 15 jours
     if (user.roleLastChanged) {
       const fifteenDaysAgo = new Date();
       fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
       if (user.roleLastChanged > fifteenDaysAgo) {
-        res.status(400).send('Vous ne pouvez changer de rôle qu\'une fois tous les 15 jours.');
+        res.status(400).send("Vous ne pouvez changer de rôle qu'une fois tous les 15 jours.");
         return;
       }
     }
 
-    // Changement de rôle
     user.role = user.role === 'Particulier' ? 'Prestataire' : 'Particulier';
     user.roleLastChanged = new Date();
     

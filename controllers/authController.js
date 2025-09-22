@@ -11,9 +11,10 @@ const authUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      phone: user.phone, // Ligne ajoutée
+      phone: user.phone,
       isAdmin: user.isAdmin,
       role: user.role,
+      profilePicture: user.profilePicture, // Ajouté
     });
   } else {
     res.status(401).send('Email ou mot de passe invalide');
@@ -48,9 +49,10 @@ const registerUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      phone: user.phone, // Ligne ajoutée
+      phone: user.phone,
       isAdmin: user.isAdmin,
       role: user.role,
+      profilePicture: user.profilePicture, // Ajouté
     });
   } else {
     res.status(400).send('Données utilisateur invalides');
