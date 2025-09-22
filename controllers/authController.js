@@ -16,6 +16,7 @@ const authUser = async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      role: user.role, // On retourne le rôle
     });
   } else {
     res.status(401).send('Email ou mot de passe invalide');
@@ -26,18 +27,15 @@ const authUser = async (req, res) => {
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = async (req, res) => {
-  const { name, email, password, phone } = req.body;
+  const { name, email, password, phone, role } = req.body; // `role` est maintenant récupéré
 
-  // --- VALIDATION DU MOT DE PASSE AJOUTÉE ---
   const passwordRegex = /^(?=.*[A-Z])(?=.*\d.*\d)(?=.*[!@#$%^&*(),.?":{}|<>]).{9,}$/;
   if (!passwordRegex.test(password)) {
     res.status(400).send('Le mot de passe ne respecte pas les critères de sécurité.');
     return;
   }
-  // --- FIN DE L'AJOUT ---
 
   const userExists = await User.findOne({ email });
-
   if (userExists) {
     res.status(400).send('Un utilisateur avec cet email existe déjà');
     return;
@@ -48,6 +46,7 @@ const registerUser = async (req, res) => {
     email,
     password,
     phone,
+    role, // `role` est maintenant sauvegardé
   });
 
   if (user.email === process.env.SUPER_ADMIN_EMAIL) {
@@ -62,6 +61,7 @@ const registerUser = async (req, res) => {
       name: user.name,
       email: user.email,
       isAdmin: user.isAdmin,
+      role: user.role, // On retourne le rôle
     });
   } else {
     res.status(400).send('Données utilisateur invalides');

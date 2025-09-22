@@ -5,6 +5,7 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
 import serviceRoutes from './routes/serviceRoutes.js';
+import userRoutes from './routes/userRoutes.js'; // Ajouté
 
 dotenv.config();
 connectDB();
@@ -12,7 +13,7 @@ connectDB();
 const app = express();
 
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', // Utilise la variable d'environnement
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true,
 };
 app.use(cors(corsOptions));
@@ -29,6 +30,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRoutes);
 app.use('/api/services', serviceRoutes);
+app.use('/api/users', userRoutes); // Ajouté
 
 app.listen(PORT, () => {
   console.log(`Server is running in ${process.env.NODE_ENV} mode on port ${PORT}`);

@@ -30,11 +30,14 @@ const userSchema = mongoose.Schema(
       enum: ['Particulier', 'Prestataire'],
       default: 'Particulier',
     },
-    // --- CHAMP AJOUTÉ ---
     isAdmin: {
       type: Boolean,
       required: true,
       default: false,
+    },
+    // --- CHAMP AJOUTÉ ---
+    roleLastChanged: {
+      type: Date,
     },
   },
   {
