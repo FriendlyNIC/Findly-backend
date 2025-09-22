@@ -14,6 +14,7 @@ const getUserProfile = async (req, res) => {
       phone: user.phone,
       role: user.role,
       roleLastChanged: user.roleLastChanged,
+      profilePicture: user.profilePicture, // Ajouté
     });
   } else {
     res.status(404).send('User not found');
@@ -77,6 +78,7 @@ const switchUserRole = async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       role: updatedUser.role,
+      profilePicture: updatedUser.profilePicture,
     });
   } else {
     res.status(404).send('User not found');
